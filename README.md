@@ -1,4 +1,5 @@
-# cherry-blossom
+# sakura
+
 Forecasts/projections for cherry blossom timing
 
 ## Methodology

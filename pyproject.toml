@@ -2,7 +2,7 @@
 name = "sakura"
 version = "0.1.0"
 description = ""
-authors = ["Scott Olesen <ulp7@cdc.gov>"]
+authors = ["Scott Olesen <swo@alum.mit.edu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
