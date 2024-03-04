@@ -103,6 +103,8 @@ There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts f
 - EPA
   - [Cherry blossom dates](https://www.epa.gov/climate-indicators/cherry-blossoms) and [data file](https://www.epa.gov/system/files/other-files/2022-09/cherry-blossoms_fig-1.csv)
   - Historical temperatures for DC: <https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00013743/detail>
+    - Daily minimum, maximum, and average temperatures are available for DC since 1936, in some patchwork
+    - Minimum temperature data are available since the 1940s and without interruption, and are biologically relevant
 - NPS
   - <https://www.nps.gov/subjects/cherryblossom/bloom-watch.htm>
   - Stage dates since 2004 (and two earlier peak bloom dates)
