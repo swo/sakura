@@ -6,7 +6,7 @@ Forecasts/projections for cherry blossom timing
 
 ### Overview
 
-After blossoming in the spring, cherry trees enter dormancy in autumn. The dormant period ends when a certain number of cold days have passed. The tree, sensing that winter is ending, begins growing buds, which grow faster when temperatures are warmer. Thus, higher winter temperatures and cooler spring temperatures both contribute to later blossom dates.
+Cherry trees bloom in the spring and then enter dormancy in autumn. The dormant period ends when a certain number of cold days have passed. The tree, sensing that winter is ending, begins growing buds, which grow faster when temperatures are warmer. Thus, lower winter temperatures and higher spring temperatures both contribute to earlier blossom dates.
 
 ### DTS model
 
@@ -36,48 +36,49 @@ Buds blossom when a certain, fixed number of DTS have elapsed since $D_\mathrm{m
 
 The method of Aono & Moritz is *ad hoc*: the model does not reflect the underlying biological mechanism, and the use of $T_F$ averaged over values that include March is causally inconsistent with predicting $D_\mathrm{me}$ in February.
 
-I use a different approach. Biological data suggests that cherry trees need to be below a certain threshold temperature, somewhere between 32 and 50 $\degree$ F, for a certain amount of time, to exit endodormancy. This dependency is expressed as "chill units." Trees need to accumulate a certain number chill units to exit endodormancy. Chill units depend nonlinearly on temperature, with temperatures below about 40 $^\degree$ F accumulating substantial chill units, temperatures below freezing accumulating somewhat more, and higher temperatures having no chilling, or even reverse chilling.
+I use a different approach. Biological data suggests that, to exit endodormancy, cherry trees need to be below a certain threshold temperature, somewhere between 32 and 50 $\degree\text{F}$, for a certain amount of time. This dependency is expressed as "chill units." Trees need to accumulate a certain number of chill units to exit endodormancy. Chill units depend nonlinearly on temperature, with temperatures between 32 $^\degree\text{F}$ and about 40 $^\degree\text{F}$ accumulating substantial chilling, temperatures below freezing accumulating somewhat more chilling, and higher temperatures contributing no chilling, or even reverse chilling.
 
-I assume that trees exit endodormancy after $C^\star$ "chill units." The chill units at day $t$ is the number of days with average temperature below a threshold chill temperature $T^\star$:
+I assume that trees exit endodormancy after $C^\star$ "chill units." The chill units at day $t$ is the number of days with average temperature below a threshold chill temperature $T_C$:
 
 $$
-C(t) = \int_{t=-\infty}^t \mathbb{1}_{T(t') < T^\star} \,dt'
+C(t) = \int_{t=-\infty}^t \mathbb{1}_{T(t') < T_C} \,dt'
 $$
 
-I only consider a single location, so $D_\mathrm{me}$ will depend only on winter temperatures.
+I only consider a single location, so $D_\mathrm{me}$ will depend only on winter temperatures and not on other factors like latitude or location.
 
-For the purposes of this model, I will interpolate $T(t)$ to allow for continuous $t$, then compute the integral at hourly timepoints.
+For the purposes of this model, I interpolate $T(t)$ to allow for continuous $t$, then compute the integral at hourly timepoints.
 
 #### DTS
 
 The Arrhenius equation is approximately linear over the relevant range, so I approximate:
 
 $$
-\mathrm{DTS}_i = A + B T_i + \mathcal{O}(T_i^2),
+\mathrm{DTS}(t) = A + B T(t) + \mathcal{O}[T(t)^2],
 $$
 
 where $A$ and $B$ are constants to be fit. I expect these to be approximately $A = 0.24$ and $B = 0.04$, when using $^\degree$ C.
 
-The bloom date $B$ is the first day $i$ such that $\sum_{i=D_\mathrm{me}}^B \mathrm{DTS}_i \geq \mathrm{DTS}^\star$.
+The full bloom date $t_F$ is the first day such that $\sum_{t=D_\mathrm{me}}^{t_F} \mathrm{DTS}(t)$ reaches some threshold value $\mathrm{DTS}^\star$.
 
 ### Model statement
 
 - Data
-  - $T_{s,i}$ daily average temperature on day $i$ in season $s$ (a season runs, eg, from June to June), in $\degree\mathrm{C}$
-  - $B_s$ day of full flowering (this is the forecast target)
+  - Each season is considered independent of other seasons
+  - $T(t)$: temperature on day $t$, in $\degree\text{C}$
+  - $B$: day of full flowering (this is the forecast target)
 - Model parameters
-  - $T^\star$ threshold temperature
-  - $C^\star$ threshold number of chill units (in this case, days under threshold temperature)
-  - $A$, $B$ are DTS parameters
-  - $\mathrm{DTS}^\star$ threshold number of DTS before blooming
+  - $T_C$: threshold temperature required to produce chill
+  - $C^\star$: threshold number of chill units (i.e., days under threshold temperature)
+  - $A$: DTS at 0 $\degree\text{C}$.
+  - $B$: additional DTS per degree Celcius
+  - $\mathrm{DTS}^\star$: threshold number of DTS before full bloom
 - Priors and observation processes
-  - $T^\star \sim \mathrm{Unif}(-2.5, 5.0)$, measured in $\degree$ C
-  - $C^\star \sim \mathrm{Unif}(5, 30)$, measured in days below $T^\star$
+  - $T_C \sim \mathrm{Unif}(-2.5, 5.0)$, measured in $\degree$ C
+  - $C^\star \sim \mathrm{Unif}(5, 30)$, measured in days below $T_C$
   - $A \sim \mathrm{Norm}(0.24, 0.1)$
   - $B \sim \mathrm{Norm}(0.04, 0.01)$
-  - $\mathrm{DTS} \sim \mathrm{Unif}(10, 100)$
-  - $\varepsilon \sim \mathrm{Unif}(-7, 7)$, observation error on $B_s$, in days
-  - $B_s = \hat{B}_s + \varepsilon$
+  - $\mathrm{DTS}^\star \sim \mathrm{Unif}(10, 100)$
+  - $\varepsilon \sim \mathrm{Unif}(-7, 7)$, observation error on $t_F$, in days (i.e., $t_F = \hat{t}_F + \varepsilon$)
 
 ### Alternative approaches and known limitations
 
@@ -99,8 +100,11 @@ There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts f
 
 ### Washington, DC
 
+- EPA
+  - [Cherry blossom dates](https://www.epa.gov/climate-indicators/cherry-blossoms) and [data file](https://www.epa.gov/system/files/other-files/2022-09/cherry-blossoms_fig-1.csv)
+  - Historical temperatures for DC: <https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00013743/detail>
 - NPS
-  - [https://www.nps.gov/subjects/cherryblossom/bloom-watch.htm]
+  - <https://www.nps.gov/subjects/cherryblossom/bloom-watch.htm>
   - Stage dates since 2004 (and two earlier peak bloom dates)
 
 ### Japan
@@ -119,3 +123,4 @@ There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts f
   - `data/nps.csv`: stage dates
   - `data/nps_stages.csv`: order of the stages
 - `scrape_aono.ipynb` produces `data/aono.csv`
+- `scrape_epa.ipynb` produces `data/epa.csv`
