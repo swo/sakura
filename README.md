@@ -89,20 +89,6 @@ b &\sim \mathcal{N}(0.04, 0.01) \\
 \end{aligned}
 $$
 
-## Alternative approaches and known limitations
-
-### Sentinel trees
-
-More [sophisticated forecasts](https://www.scmp.com/lifestyle/travel-leisure/article/3215108/why-making-japans-cherry-blossom-forecasts-such-pressurised-job-trouble-those-get-it-wrong) in Japan account for weather data as well as observational data from sentinel trees.
-
-Or, blooms for other plants, if they come earlier than cherry trees: <https://www.epa.gov/climate-indicators/climate-change-indicators-leaf-and-bloom-dates>
-
-### Other variables
-
-E.g., [another modeler](https://yuriko-schumacher.github.io/statistical-analysis-of-cherry-blossom-first-bloom-date/) used an empirical approach, concluding that blooms occurs after 400 or 600 cumulative daily degrees during spring.
-
-There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts from machine learning approach concluding that temperature is the main driver of blossom date, not precipitation or sunlight.
-
 ## Data
 
 [Sub-hourly temperature data](https://www.ncei.noaa.gov/products/global-historical-climatology-network-hourly) for DC (station `USW00013743` at DCA) is from NOAA.
@@ -111,6 +97,9 @@ There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts f
 
 ### Other data
 
+- Sentinel trees: More [sophisticated forecasts](https://www.scmp.com/lifestyle/travel-leisure/article/3215108/why-making-japans-cherry-blossom-forecasts-such-pressurised-job-trouble-those-get-it-wrong) in Japan account for weather data as well as observational data from sentinel trees.
+  - Using [satellite data](https://www.american.edu/cas/faculty/alonzo.cfm)?
+- Blooms for other plants, if they come earlier than cherry trees: <https://www.epa.gov/climate-indicators/climate-change-indicators-leaf-and-bloom-dates>
 - Japan Meteorological Agency
   - [Kaggle scrape](https://www.kaggle.com/datasets/ryanglasnapp/japanese-cherry-blossom-data)
   - [Source data](https://www.data.jma.go.jp/sakura/data/index.html)
@@ -118,3 +107,9 @@ There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts f
   - [https://www.ncei.noaa.gov/access/paleo-search/study/26430]
   - 1200 years of peak bloom dates and mean March temperatures
   - Kyoto
+
+## Prior analyses
+
+[Another modeler](https://yuriko-schumacher.github.io/statistical-analysis-of-cherry-blossom-first-bloom-date/) used an empirical approach, concluding that blooms occurs after 400 or 600 cumulative daily degrees during spring.
+
+There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts from machine learning approach concluding that temperature is the main driver of blossom date, not precipitation or sunlight.
