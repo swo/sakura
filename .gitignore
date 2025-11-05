@@ -49,3 +49,4 @@ cover/
 /site
 
 data/
+secrets.yaml

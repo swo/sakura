@@ -110,6 +110,7 @@ For the purposes of this model, I interpolate $\theta(t)$ to allow for continuou
 - EPA
   - [Cherry blossom dates](https://www.epa.gov/climate-indicators/cherry-blossoms) and [data file](https://www.epa.gov/system/files/other-files/2022-09/cherry-blossoms_fig-1.csv)
   - Historical temperatures for DC: <https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00013743/detail>
+  - Need an [API token](https://www.ncdc.noaa.gov/cdo-web/token), to be placed in `secrets.yaml`
 - NPS
   - <https://www.nps.gov/subjects/cherryblossom/bloom-watch.htm>
   - Stage dates since 2004 (and two earlier peak bloom dates)
