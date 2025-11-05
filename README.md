@@ -95,6 +95,8 @@ $$
 
 More [sophisticated forecasts](https://www.scmp.com/lifestyle/travel-leisure/article/3215108/why-making-japans-cherry-blossom-forecasts-such-pressurised-job-trouble-those-get-it-wrong) in Japan account for weather data as well as observational data from sentinel trees.
 
+Or, blooms for other plants, if they come earlier than cherry trees: <https://www.epa.gov/climate-indicators/climate-change-indicators-leaf-and-bloom-dates>
+
 ### Other variables
 
 E.g., [another modeler](https://yuriko-schumacher.github.io/statistical-analysis-of-cherry-blossom-first-bloom-date/) used an empirical approach, concluding that blooms occurs after 400 or 600 cumulative daily degrees during spring.
@@ -110,9 +112,8 @@ For the purposes of this model, I interpolate $\theta(t)$ to allow for continuou
 - NPS
   - <https://www.nps.gov/subjects/cherryblossom/bloom-watch.htm>
   - Stage dates since 2004 (and two earlier peak bloom dates)
-- NOAA: Sub-hourly temperature data for DC: <https://www.ncei.noaa.gov/products/global-historical-climatology-network-hourly>, from station `USW00013743` at DCA
-- EPA
-  - [Cherry blossom dates](https://www.epa.gov/climate-indicators/cherry-blossoms) and [data file](https://www.epa.gov/system/files/other-files/2022-09/cherry-blossoms_fig-1.csv)
+- NOAA: [Sub-hourly temperature data](https://www.ncei.noaa.gov/products/global-historical-climatology-network-hourly) for DC (station `USW00013743` at DCA)
+- EPA: [Cherry blossom dates](https://www.epa.gov/climate-indicators/cherry-blossoms)
 
 ### Japan
 

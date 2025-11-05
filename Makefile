@@ -1,7 +1,10 @@
 NOAA_URL = https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/access/by-station/GHCNh_USW00013743_por.psv
 
 
-all: data/nps.csv data/noaa.csv
+all: data/epa.csv data/nps.csv data/noaa.csv
+
+data/epa.csv: scripts/scrape_epa.py
+	python $< --output $@
 
 data/nps.csv: scripts/scrape_nps.py
 	python $< --output $@
