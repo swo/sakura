@@ -36,6 +36,8 @@ def clean(path: str) -> pl.DataFrame:
             separator="|",
             schema_overrides={"temperature_Quality_Code": pl.String},
         )
+        # drop null values
+        .filter(pl.col("temperature").is_not_null())
         # remove values with bad error codes
         .join(
             quality_codes,
