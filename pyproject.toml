@@ -11,6 +11,7 @@ dependencies = [
     "numpy>=1.26.3",
     "altair>=5.2.0",
     "pyarrow>=14.0.2",
+    "bs4>=0.0.2",
 ]
 
 [dependency-groups]

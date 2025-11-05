@@ -126,8 +126,6 @@ For the purposes of this model, I interpolate $\theta(t)$ to allow for continuou
 
 ## Data files
 
-- `scrape_nps.ipynb` produces:
-  - `data/nps.csv`: stage dates
-  - `data/nps_stages.csv`: order of the stages
+- `scrape_nps.py` produces `data/nps.csv`: stage dates
 - `scrape_aono.ipynb` produces `data/aono.csv`
 - `scrape_epa.ipynb` produces `data/epa.csv`
