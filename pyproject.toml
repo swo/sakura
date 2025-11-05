@@ -1,23 +1,22 @@
-[tool.poetry]
+[project]
 name = "sakura"
 version = "0.1.0"
 description = ""
-authors = ["Scott Olesen <swo@alum.mit.edu>"]
+authors = [{ name = "Scott Olesen", email = "swo@alum.mit.edu" }]
+requires-python = "~=3.10"
 readme = "README.md"
+dependencies = [
+    "numpyro>=0.13.2,<0.14",
+    "polars>=0.20.5,<0.21",
+    "numpy>=1.26.3,<2",
+    "altair>=5.2.0,<6",
+    "jax>=0.4.23,<0.5",
+    "pyarrow>=14.0.2,<15",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-numpyro = "^0.13.2"
-polars = "^0.20.5"
-numpy = "^1.26.3"
-altair = "^5.2.0"
-jax = "^0.4.23"
-pyarrow = "^14.0.2"
-
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.3"
+[dependency-groups]
+dev = ["ipykernel>=6.29.3,<7"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
