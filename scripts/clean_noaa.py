@@ -3,36 +3,7 @@ import argparse
 import polars as pl
 
 
-def get_raw(verbose=True) -> pl.DataFrame:
-    url = "https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/access/by-station/GHCNh_USW00013743_por.psv"
-
-    if verbose:
-        # the data are ~1Gb and take some time to download
-        print("  Downloading... ", end="", flush=True)
-
-    df = pl.read_csv(
-        url,
-        columns=[
-            "Year",
-            "Month",
-            "Day",
-            "Hour",
-            "Minute",
-            "temperature",
-            "temperature_Source_Code",
-            "temperature_Quality_Code",
-        ],
-        separator="|",
-        schema_overrides={"temperature_Quality_Code": pl.String},
-    )
-
-    if verbose:
-        print("done", flush=True)
-
-    return df
-
-
-def clean(df: pl.DataFrame) -> pl.DataFrame:
+def clean(path: str) -> pl.DataFrame:
     # see https://www.ncei.noaa.gov/oa/global-historical-climatology-network/hourly/doc/ghcnh_DOCUMENTATION.pdf
     # {source codes => erroneous or suspect quality codes}
     quality_codes_dict = {
@@ -50,7 +21,21 @@ def clean(df: pl.DataFrame) -> pl.DataFrame:
     )
 
     return (
-        df
+        pl.read_csv(
+            path,
+            columns=[
+                "Year",
+                "Month",
+                "Day",
+                "Hour",
+                "Minute",
+                "temperature",
+                "temperature_Source_Code",
+                "temperature_Quality_Code",
+            ],
+            separator="|",
+            schema_overrides={"temperature_Quality_Code": pl.String},
+        )
         # remove values with bad error codes
         .join(
             quality_codes,
@@ -75,9 +60,9 @@ def clean(df: pl.DataFrame) -> pl.DataFrame:
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
+    p.add_argument("--input", required=True)
     p.add_argument("--output", required=True)
     args = p.parse_args()
 
-    raw_data = get_raw()
-    data = clean(raw_data)
+    data = clean(args.input)
     data.write_csv(args.output)
