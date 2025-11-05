@@ -3,7 +3,7 @@ name = "sakura"
 version = "0.1.0"
 description = ""
 authors = [{ name = "Scott Olesen", email = "swo@alum.mit.edu" }]
-requires-python = "~=3.10"
+requires-python = ">=3.13"
 readme = "README.md"
 dependencies = [
     "numpyro>=0.13.2",
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ipykernel>=6.29.3,<7"]
+dev = ["ipykernel>=6.29.3"]
 
 [build-system]
 requires = ["hatchling"]
