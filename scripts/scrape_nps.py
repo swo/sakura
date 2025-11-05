@@ -60,7 +60,7 @@ def scrape(url="https://www.nps.gov/subjects/cherryblossom/bloom-watch.htm"):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("output")
+    p.add_argument("--output", required=True)
     args = p.parse_args()
 
     data = scrape()

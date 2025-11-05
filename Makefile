@@ -1,8 +1,8 @@
 
-.PHONY: noaa
+all: data/nps.csv data/noaa.csv
 
 data/nps.csv: scripts/scrape_nps.py
-	python $< $@
+	python $< --output $@
 
-noaa: scripts/scrape_noaa.py
-	python $<
+data/noaa.csv: scripts/scrape_noaa.py
+	python $< --output $@
