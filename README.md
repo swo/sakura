@@ -110,6 +110,20 @@ $$
 
 ## Prior analyses
 
-[Another modeler](https://yuriko-schumacher.github.io/statistical-analysis-of-cherry-blossom-first-bloom-date/) used an empirical approach, concluding that blooms occurs after 400 or 600 cumulative daily degrees during spring.
-
 There are [some](https://rapidminer.com/blog/ksk-analytics-solution/) accounts from machine learning approach concluding that temperature is the main driver of blossom date, not precipitation or sunlight.
+
+### Yuriko Schumacher
+
+See analysis at <https://yuriko-schumacher.github.io/statistical-analysis-of-cherry-blossom-first-bloom-date/>. Schumacher tests the "400-degree theory" (and 600-degree theory), which is that peak bloom comes after 400 cumulative average daily degrees since February 1.
+
+This is essentially fixing an integer values $s_C$ (analogous to our continuous-valued $t_C$) at Feb 1 and asserting that $s_B$ is the smallest date such that:
+
+$$
+E^\star \leq \sum_{s=s_C}^{s_B} \bar{\theta}(s)
+$$
+
+where $E^\star=400 \degree \mathrm{C} \text{ days}$ and $\bar{\theta}(s) = (1 \text{ day})^{-1} \int_{s \text{ days}}^{s+1 \text{ days}} \theta(t) \,dt$. Note that this suggests an equivalent continuous time-valued condition:
+
+$$
+E^\star = \frac{\int_{t_C}^{t_B} \theta(t) \,dt}{t_B - t_C}
+$$
