@@ -9,46 +9,39 @@ import numpyro.infer
 
 
 class Schumacher:
-    default_data_params = {
-        "tC": 40,
-    }
-    default_model_params = {
-        "muD_lo": 100.0,
-        "muD_hi": 200.0,
-        "sigmaD_scale": 10.0,
-    }
-
-    default_mcmc_params = {"num_warmup": 1000, "num_samples": 1000}
-
     def __init__(
         self,
         temps: np.ndarray,
         blooms: np.ndarray,
-        data_params: dict[str, Any] | None = None,
-        model_params: dict[str, Any] | None = None,
-        mcmc_params: dict[str, Any] | None = None,
+        tC: int = 40,
+        muD_lo: float = 100.0,
+        muD_hi: float = 200.0,
+        sigmaD_scale: float = 10.0,
+        mcmc_params: dict[str, float] = {
+            "num_warmup": 250,
+            "num_samples": 250,
+        },
         seed=42,
     ):
-        self.data_params = self.default_data_params | (data_params or {})
-        self.model_params = self.default_model_params | (model_params or {})
-        self.mcmc_params = self.default_mcmc_params | (mcmc_params or {})
-
-        assert self.data_params["tC"] == int(self.data_params["tC"]), (
-            "tC must be integer-valued"
-        )
-
+        assert tC == int(tC), "tC must be integer-valued"
         assert temps.ndim == 2
         self.n = temps.shape[0]
-        assert temps.shape[1] > self.data_params["tC"]
-
+        assert temps.shape[1] > tC
         assert blooms.ndim == 1
         assert len(blooms) == self.n
-        self.blooms = blooms
 
+        self.tC = tC
+        self.muD_lo = muD_lo
+        self.muD_hi = muD_hi
+        self.sigmaD_scale = sigmaD_scale
+        self.mcmc_params = mcmc_params
+        self.seed = seed
+
+        self.blooms = blooms
         # clean temperatures: keep only after the end of endodormancy, and make them
         # above-zero
         self.raw_temps = temps
-        self.temps = np.maximum(0.0, temps[:, self.data_params["tC"] :])
+        self.temps = np.maximum(0.0, temps[:, tC:])
 
         self.seed = seed
 
@@ -60,18 +53,9 @@ class Schumacher:
         """
         x = jnp.arange(len(y))
         ycum = jnp.cumsum(y)
-        print(f"interp: {x=} {ycum=}")
         return jnp.interp(ystar, ycum, x)
 
-    @classmethod
-    def model(
-        cls,
-        blooms: np.ndarray | None,
-        temps: np.ndarray,
-        muD_lo: float,
-        muD_hi: float,
-        sigmaD_scale: float,
-    ):
+    def model(self, blooms: np.ndarray, temps: np.ndarray):
         assert temps.ndim == 2
         n = temps.shape[0]
 
@@ -79,31 +63,20 @@ class Schumacher:
             assert blooms.ndim == 1
             assert len(blooms) == n
 
-        muD = numpyro.sample("muD", dist.Uniform(muD_lo, muD_hi))
-        sigmaD = numpyro.sample("sigmaD", dist.HalfCauchy(sigmaD_scale))
+        muD = numpyro.sample("muD", dist.Uniform(self.muD_lo, self.muD_hi))
+        sigmaD = numpyro.sample("sigmaD", dist.HalfCauchy(self.sigmaD_scale))
         zD = numpyro.sample("zD", dist.Uniform(0.0, 1.0), sample_shape=(n,))
         Dstar = numpyro.deterministic("Dstar", muD + sigmaD * zD)
         assert len(Dstar) == n
 
-        mutB = jnp.empty_like(Dstar)
-
-        for i in range(n):
-            mutB.at[i].set(cls._interp(temps[i, :], Dstar[i]))
-
-        print(mutB)
+        mutB = jnp.array([self._interp(temps[i, :], Dstar[i]) for i in range(n)])
 
         numpyro.sample("obs", dist.Poisson(mutB), obs=blooms)
 
     def fit(self):
         self.kernel = numpyro.infer.NUTS(self.model)
         self.mcmc = numpyro.infer.MCMC(self.kernel, **self.mcmc_params)
-
-        self.mcmc.run(
-            jax.random.key(self.seed),
-            blooms=self.blooms,
-            temps=self.temps,
-            **self.model_params,
-        )
+        self.mcmc.run(jax.random.key(self.seed), blooms=self.blooms, temps=self.temps)
 
     def predict(self):
         return numpyro.infer.Predictive(self.model, self.mcmc.get_samples())
