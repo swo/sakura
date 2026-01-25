@@ -6,6 +6,30 @@ Forecasts/projections for cherry blossom timing
 
 Cherry trees bloom in the spring and then enter dormancy in autumn. The dormant period ends when a certain number of cold days have passed. The tree, sensing that winter is ending, begins growing buds, which grow faster when temperatures are warmer. Thus, lower winter temperatures and higher spring temperatures both contribute to earlier blossom dates.
 
+## Schumacher
+
+Yuriko Schumacher [used](https://yuriko-schumacher.github.io/statistical-analysis-of-cherry-blossom-first-bloom-date/) an empirical approach, concluding that blooms occurs after 400 or 600 cumulative daily degrees during spring.
+
+Let $\theta_i$ be the daily minimum temperature on day $i$, in Celsius. Define the cumulative daily minimum above-zero temperature
+
+$$
+\Theta(s) \equiv \sum_{i=\lfloor t_C \rfloor}^s \max \left\{ \theta_i, 0 \right\}
+$$
+
+for integer $s$, where $t_C$ is the end of endodormancy. Define $\Theta^{-1}(d)$ that maps from cumulative minimum above-zero daily degrees and linearly interpolate to produce a continuous-valued function.
+
+Assume that the time $t_C$ to exit endodormancy is the same for all years. Bloom occurs at time $t_B$ when a certain number $D^\star$ of cumulative daily minimum above-zero degrees has accumulated. This number varies across years, with some shared mean and variance.
+
+$$
+\begin{align*}
+t_C &= 40.0 \text{ days} \\
+D^\star &\sim \mathcal{N}(\mu_D, \sigma_D) \\
+\mu_D &\sim \mathrm{Unif}(100.0, 200.0) \\
+\sigma_D &\sim \mathrm{HalfCauchy}(10.0) \\
+t_B &= \mathrm{Pois}\left( \Theta^{-1}(D^\star) \right)
+\end{align*}
+$$
+
 ## Aono & Moriya (2003)
 
 The Japanese cherry blossom [forecasts](https://sakura.weathermap.jp/en.php) are based on the "DTS" method of [Aono & Moriya (2003)](https://www.jstage.jst.go.jp/article/agrmet/59/2/59_2_165/_pdf/-char/ja).
