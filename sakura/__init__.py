@@ -17,6 +17,7 @@ class Schumacher:
         muD_lo: float = 100.0,
         muD_hi: float = 200.0,
         sigmaD_scale: float = 10.0,
+        sigma_eps: float = 1.0,
         mcmc_params: dict[str, float] = {
             "num_warmup": 250,
             "num_samples": 250,
@@ -34,26 +35,32 @@ class Schumacher:
         self.muD_lo = muD_lo
         self.muD_hi = muD_hi
         self.sigmaD_scale = sigmaD_scale
+        self.sigma_eps = sigma_eps
         self.mcmc_params = mcmc_params
         self.seed = seed
 
         self.blooms = blooms
+
         # clean temperatures: keep only after the end of endodormancy, and make them
         # above-zero
         self.raw_temps = temps
-        self.temps = np.maximum(0.0, temps[:, tC:])
+        self.temps = temps.copy()
+        temps[:, :tC] = 0.0
+        temps[:, tC:] = np.maximum(0.0, temps[:, tC:])
 
-        self.seed = seed
+        self.key = jax.random.key(self.seed, impl="threefry2x32")
 
     @staticmethod
-    def _interp(y: np.ndarray, ystar: float):
+    def _interp(y: np.ndarray, ystar: float, tC: int):
         """
         Take the `y` and get their cumulative sum. Then find the continuous-valued
         quasi-index such that the cumsum at that index would yield `ystar`.
         """
-        x = jnp.arange(len(y))
-        ycum = jnp.cumsum(y)
-        return jnp.interp(ystar, ycum, x)
+        ytrunc = y[tC:]
+
+        x = jnp.arange(len(ytrunc))
+        ycum = jnp.cumsum(ytrunc)
+        return jnp.interp(ystar, ycum, x) + tC
 
     def model(self, blooms: np.ndarray, temps: np.ndarray):
         assert temps.ndim == 2
@@ -69,14 +76,17 @@ class Schumacher:
         Dstar = numpyro.deterministic("Dstar", muD + sigmaD * zD)
         assert len(Dstar) == n
 
-        mutB = jnp.array([self._interp(temps[i, :], Dstar[i]) for i in range(n)])
-
-        numpyro.sample("obs", dist.Poisson(mutB), obs=blooms)
+        # mean of bloom time
+        mut = jnp.array(
+            [self._interp(temps[i, :], Dstar[i], tC=self.tC) for i in range(n)]
+        )
+        assert len(mut) == n
+        numpyro.sample("obs", dist.Normal(mut, self.sigma_eps), obs=blooms)
 
     def fit(self):
         self.kernel = numpyro.infer.NUTS(self.model)
         self.mcmc = numpyro.infer.MCMC(self.kernel, **self.mcmc_params)
-        self.mcmc.run(jax.random.key(self.seed), blooms=self.blooms, temps=self.temps)
+        self.mcmc.run(self.key, blooms=self.blooms, temps=self.temps)
 
-    def predict(self):
+    def predictive(self):
         return numpyro.infer.Predictive(self.model, self.mcmc.get_samples())
